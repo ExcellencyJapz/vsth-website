@@ -756,13 +756,10 @@ function applyAdmin() {
 //  MEMBERS
 // ══════════════════════════════════════════
 let members = JSON.parse(localStorage.getItem('vsth-members') || 'null') || [
-  { name:'VSTH_Leader', role:'leader',  note:'Clan Leader / IGL',   server:'steam' },
-  { name:'VSTH_CoLead', role:'co',      note:'Co-Leader / Assaulter', server:'steam' },
-  { name:'VSTH_Elder1', role:'elder',   note:'Elder / Sniper',       server:'steam' },
-  { name:'VSTH_Elder2', role:'elder',   note:'Elder / Support',      server:'steam' },
-  { name:'VSTH_Pro1',   role:'member',  note:'Member / Fragger',     server:'steam' },
-  { name:'VSTH_Pro2',   role:'member',  note:'Member / Driver',      server:'steam' },
-  { name:'VSTH_New1',   role:'recruit', note:'Recruit',              server:'steam' },
+  { name:'ExcellencyJapz', role:'leader',  note:'IGL',     server:'steam' },
+  { name:'Reionn_',        role:'leader',  note:'IGL',     server:'steam' },
+  { name:'Venom_Mannz',    role:'leader',  note:'Support', server:'steam' },
+  { name:'Qarez-X',        role:'leader',  note:'IGL',     server:'steam' },
 ];
 const roleLabel = { leader:'Leader', co:'Co-Leader', elder:'Elder', member:'Member', recruit:'Recruit' };
 const roleClass  = { leader:'role-leader', co:'role-co', elder:'role-elder', member:'role-member', recruit:'role-recruit' };
