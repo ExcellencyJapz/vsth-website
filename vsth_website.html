@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VSTH - Versus Thailand | PUBG Clan</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Saira+Condensed:wght@400;600;700;900&family=Noto+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --amber: #f5a623;
+    --amber-dark: #c27d0e;
+    --amber-glow: rgba(245,166,35,0.3);
+    --rust: #c0392b;
+    --dark-bg: #0a0b0d;
+    --darker: #060708;
+    --panel: rgba(15,17,21,0.92);
+    --panel-border: rgba(245,166,35,0.18);
+    --text: #d4cfc7;
+    --text-dim: #7a756e;
+    --leader-gold: #ffd700;
+    --co-leader: #e8a020;
+    --elder: #c0a060;
+    --member: #8aab6c;
+    --recruit: #6a8fac;
+    --green: #27ae60;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    background:var(--dark-bg); color:var(--text);
+    font-family:'Noto Sans Thai','Rajdhani',sans-serif;
+    min-height:100vh; overflow-x:hidden;
+  }
+
+  /* ─── BG ─── */
+  .bg-layer {
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245,166,35,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 10% 80%, rgba(192,57,43,0.06) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(245,166,35,0.03) 39px, rgba(245,166,35,0.03) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(245,166,35,0.03) 39px, rgba(245,166,35,0.03) 40px);
+  }
+  .bg-noise {
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ─── LOGIN OVERLAY ─── */
+  #login-overlay {
+    position:fixed; inset:0; z-index:9999;
+    background:rgba(4,5,6,0.97);
+    display:flex; align-items:center; justify-content:center;
+    backdrop-filter:blur(8px);
+    animation:fadeIn .3s ease;
+  }
+  #login-overlay.hidden { display:none; }
+  .login-box {
+    background:rgba(10,12,16,0.99);
+    border:1px solid var(--panel-border);
+    border-top:3px solid var(--amber);
+    padding:2.8rem 3rem; width:100%; max-width:420px;
+    position:relative;
+    box-shadow:0 0 100px rgba(245,166,35,0.1), 0 40px 80px rgba(0,0,0,0.6);
+  }
+  .login-close {
+    position:absolute; top:1rem; right:1.2rem;
+    background:none; border:none; color:var(--text-dim);
+    font-size:1.1rem; cursor:pointer; transition:color .2s; line-height:1;
+  }
+  .login-close:hover { color:var(--rust); }
+  .login-logo {
+    font-family:'Saira Condensed',sans-serif; font-weight:900;
+    font-size:2.6rem; letter-spacing:6px; text-align:center;
+    color:var(--amber); margin-bottom:.2rem;
+    text-shadow:0 0 40px var(--amber-glow);
+  }
+  .login-sub {
+    font-family:'Rajdhani',sans-serif; font-size:.72rem; font-weight:700;
+    letter-spacing:3px; text-transform:uppercase; color:var(--text-dim);
+    text-align:center; margin-bottom:2.2rem;
+  }
+  .login-field { margin-bottom:1.3rem; }
+  .login-field label {
+    display:block; font-family:'Rajdhani',sans-serif; font-size:.72rem;
+    font-weight:700; letter-spacing:2px; text-transform:uppercase;
+    color:var(--text-dim); margin-bottom:.5rem;
+  }
+  .login-field input {
+    width:100%; background:rgba(255,255,255,0.03);
+    border:1px solid rgba(245,166,35,0.2); color:var(--text);
+    padding:11px 14px; font-family:'Noto Sans Thai',sans-serif; font-size:.95rem;
+    outline:none; transition:border-color .2s,box-shadow .2s; letter-spacing:1px;
+  }
+  .login-field input:focus {
+    border-color:var(--amber);
+    box-shadow:0 0 0 3px rgba(245,166,35,0.07);
+  }
+  .login-btn {
+    width:100%; margin-top:.6rem;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1rem;
+    letter-spacing:3px; text-transform:uppercase;
+    color:#000; background:var(--amber); border:none;
+    padding:13px; cursor:pointer;
+    clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+    transition:background .2s,transform .15s;
+  }
+  .login-btn:hover { background:#fff; transform:translateY(-1px); }
+  .login-error {
+    margin-top:1rem; text-align:center;
+    font-family:'Rajdhani',sans-serif; font-size:.85rem; font-weight:600;
+    letter-spacing:1px; color:var(--rust); display:none;
+  }
+  .login-error.show { display:block; animation:shake .35s ease; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-8px)} 60%{transform:translateX(8px)} 80%{transform:translateX(-4px)}
+  }
+  .login-attempts {
+    text-align:center; font-family:'Rajdhani',sans-serif;
+    font-size:.72rem; color:var(--text-dim); margin-top:.7rem; letter-spacing:1px;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position:sticky; top:0; z-index:100;
+    background:rgba(6,7,8,0.95);
+    border-bottom:1px solid var(--panel-border);
+    backdrop-filter:blur(12px);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 2rem; height:60px; gap:1rem;
+  }
+  .nav-logo {
+    font-family:'Saira Condensed',sans-serif; font-weight:900; font-size:1.7rem;
+    letter-spacing:3px; color:var(--amber); text-shadow:0 0 20px var(--amber-glow);
+    display:flex; align-items:center; gap:.5rem; flex-shrink:0;
+  }
+  .nav-logo span { color:#fff; }
+  .nav-links { display:flex; gap:2rem; }
+  .nav-links a {
+    font-family:'Rajdhani',sans-serif; font-weight:600; font-size:.95rem;
+    letter-spacing:2px; text-transform:uppercase; text-decoration:none;
+    color:var(--text-dim); transition:color .2s;
+  }
+  .nav-links a:hover,.nav-links a.active { color:var(--amber); }
+  .nav-right { display:flex; align-items:center; gap:.8rem; flex-shrink:0; }
+  .nav-tag {
+    font-family:'Rajdhani',sans-serif; font-size:.8rem; font-weight:600;
+    letter-spacing:2px; color:var(--amber-dark);
+    border:1px solid var(--amber-dark); padding:3px 10px; border-radius:2px;
+  }
+
+  /* Admin status */
+  .admin-bar {
+    display:none; align-items:center; gap:.7rem;
+    background:rgba(245,166,35,0.07);
+    border:1px solid rgba(245,166,35,0.22);
+    padding:4px 12px;
+  }
+  .admin-bar.visible { display:flex; }
+  .admin-dot { width:7px; height:7px; background:var(--green); border-radius:50%; animation:blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .admin-label {
+    font-family:'Rajdhani',sans-serif; font-size:.72rem; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase; color:var(--amber);
+  }
+  .logout-btn {
+    font-family:'Rajdhani',sans-serif; font-size:.65rem; font-weight:700;
+    letter-spacing:1px; background:none; border:none;
+    color:var(--text-dim); cursor:pointer; transition:color .2s;
+  }
+  .logout-btn:hover { color:var(--rust); }
+  .nav-login-btn {
+    font-family:'Rajdhani',sans-serif; font-size:.75rem; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase;
+    background:transparent; border:1px solid rgba(245,166,35,0.3);
+    color:var(--text-dim); padding:5px 14px; cursor:pointer; transition:all .2s;
+  }
+  .nav-login-btn:hover { border-color:var(--amber); color:var(--amber); }
+
+  /* ─── ADMIN VISIBILITY ─── */
+  /* by default, all admin-only stuff is hidden */
+  .ao { display:none !important; }
+  body.is-admin .ao { display:flex !important; }
+  .ao-block { display:none !important; }
+  body.is-admin .ao-block { display:block !important; }
+  .ao-inline { display:none !important; }
+  body.is-admin .ao-inline { display:inline-block !important; }
+
+  /* ─── PAGES ─── */
+  .page { display:none; position:relative; z-index:1; }
+  .page.active { display:block; animation:fadeIn .3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+  /* ─── HERO ─── */
+  .hero { min-height:calc(100vh - 60px); display:grid; place-items:center; padding:4rem 2rem; }
+  .hero-inner { text-align:center; max-width:860px; }
+  .hero-badge {
+    display:inline-block;
+    font-family:'Rajdhani',sans-serif; font-size:.8rem; font-weight:700;
+    letter-spacing:4px; text-transform:uppercase; color:var(--amber);
+    border:1px solid var(--amber-dark); padding:4px 16px; margin-bottom:1.5rem;
+    background:rgba(245,166,35,0.05);
+  }
+  .hero-clan {
+    font-family:'Saira Condensed',sans-serif; font-weight:900;
+    font-size:clamp(4rem,12vw,9rem); line-height:.9;
+    letter-spacing:6px; text-transform:uppercase; color:#fff;
+    animation:heroGlow 3s ease-in-out infinite alternate;
+  }
+  @keyframes heroGlow {
+    from{text-shadow:0 0 40px rgba(245,166,35,0.3),0 0 80px rgba(245,166,35,0.1)}
+    to  {text-shadow:0 0 80px rgba(245,166,35,0.5),0 0 160px rgba(245,166,35,0.2)}
+  }
+  .hero-sub {
+    font-family:'Saira Condensed',sans-serif; font-weight:600;
+    font-size:clamp(1.2rem,3vw,2rem); letter-spacing:8px;
+    color:var(--amber); margin:.5rem 0 2rem;
+  }
+  .hero-divider { width:200px; height:2px; margin:1.5rem auto; background:linear-gradient(90deg,transparent,var(--amber),transparent); }
+  .hero-desc { font-size:1.05rem; line-height:1.9; color:var(--text-dim); max-width:600px; margin:0 auto 2.5rem; }
+  .hero-stats { display:flex; justify-content:center; gap:3rem; flex-wrap:wrap; margin-top:2rem; }
+  .stat { text-align:center; }
+  .stat-num { font-family:'Saira Condensed',sans-serif; font-weight:900; font-size:2.5rem; color:var(--amber); }
+  .stat-label { font-family:'Rajdhani',sans-serif; font-size:.75rem; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--text-dim); }
+  .hero-cta {
+    display:inline-block; margin-top:2.5rem;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1rem;
+    letter-spacing:3px; text-transform:uppercase;
+    color:var(--dark-bg); background:var(--amber);
+    padding:12px 36px; text-decoration:none;
+    clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+    transition:all .2s; cursor:pointer; border:none;
+  }
+  .hero-cta:hover { background:#fff; transform:translateY(-2px); }
+
+  /* ─── SECTION ─── */
+  .section { padding:5rem 2rem; max-width:1200px; margin:0 auto; }
+  .sec-title { font-family:'Saira Condensed',sans-serif; font-weight:900; font-size:2.2rem; letter-spacing:4px; text-transform:uppercase; color:#fff; margin-bottom:.4rem; }
+  .sec-title span { color:var(--amber); }
+  .sec-sub { font-family:'Rajdhani',sans-serif; font-size:.8rem; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--text-dim); margin-bottom:2.5rem; }
+  .sec-line { width:60px; height:2px; background:linear-gradient(90deg,var(--amber),transparent); margin:.6rem 0 2.5rem; }
+
+  /* ─── ANNOUNCEMENT ─── */
+  .ann-board {
+    background:var(--panel); border:1px solid var(--panel-border);
+    border-top:3px solid var(--amber); padding:2rem 2.5rem; margin-bottom:3rem;
+    position:relative; overflow:hidden;
+  }
+  .ann-board::before {
+    content:''; position:absolute; top:0; right:0; width:200px; height:200px;
+    background:radial-gradient(circle at top right,rgba(245,166,35,0.06),transparent 70%);
+    pointer-events:none;
+  }
+  .ann-header { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+  .ann-icon {
+    width:44px; height:44px; background:var(--amber);
+    display:grid; place-items:center;
+    clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+    font-size:1.2rem; flex-shrink:0;
+  }
+  .ann-title-wrap { flex:1; }
+  .ann-label { font-family:'Rajdhani',sans-serif; font-size:.7rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--amber); }
+  .ann-sender { font-family:'Saira Condensed',sans-serif; font-weight:700; font-size:1.3rem; color:#fff; letter-spacing:1px; }
+  .ann-badge {
+    background:var(--leader-gold); color:#000;
+    font-family:'Rajdhani',sans-serif; font-size:.65rem; font-weight:700;
+    letter-spacing:2px; padding:3px 10px; text-transform:uppercase;
+    clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+  }
+  .ann-date { font-family:'Rajdhani',sans-serif; font-size:.8rem; color:var(--text-dim); letter-spacing:1px; }
+  .ann-body { font-size:1rem; line-height:1.8; color:var(--text); border-left:2px solid var(--amber-dark); padding-left:1.2rem; }
+  .ann-textarea {
+    width:100%; background:transparent; border:none; resize:none;
+    font-family:'Noto Sans Thai',sans-serif; font-size:1rem; line-height:1.8;
+    color:var(--text); outline:none; min-height:100px;
+  }
+  .ann-edit-btn {
+    margin-top:1rem; padding:6px 18px;
+    font-family:'Rajdhani',sans-serif; font-size:.8rem; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase;
+    background:transparent; border:1px solid var(--amber-dark);
+    color:var(--amber); cursor:pointer; transition:all .2s;
+  }
+  .ann-edit-btn:hover { background:var(--amber); color:#000; }
+
+  /* ─── MEMBERS ─── */
+  .role-filter { display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:2rem; }
+  .role-btn {
+    font-family:'Rajdhani',sans-serif; font-size:.8rem; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase;
+    padding:5px 16px; border:1px solid; background:transparent; cursor:pointer; transition:all .2s;
+    clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
+  }
+  .role-btn.all    { border-color:var(--text-dim); color:var(--text-dim); }
+  .role-btn.all.active,.role-btn.all:hover       { background:var(--text-dim); color:#000; }
+  .role-btn.leader { border-color:var(--leader-gold); color:var(--leader-gold); }
+  .role-btn.leader.active,.role-btn.leader:hover { background:var(--leader-gold); color:#000; }
+  .role-btn.co     { border-color:var(--co-leader); color:var(--co-leader); }
+  .role-btn.co.active,.role-btn.co:hover         { background:var(--co-leader); color:#000; }
+  .role-btn.elder  { border-color:var(--elder); color:var(--elder); }
+  .role-btn.elder.active,.role-btn.elder:hover   { background:var(--elder); color:#000; }
+  .role-btn.member { border-color:var(--member); color:var(--member); }
+  .role-btn.member.active,.role-btn.member:hover { background:var(--member); color:#000; }
+  .role-btn.recruit{ border-color:var(--recruit); color:var(--recruit); }
+  .role-btn.recruit.active,.role-btn.recruit:hover{background:var(--recruit); color:#000; }
+
+  .members-grid { display:flex; flex-direction:column; gap:.8rem; }
+  .member-card {
+    background:var(--panel); border:1px solid var(--panel-border);
+    padding:1rem 1.4rem; display:flex; align-items:center; gap:1.2rem;
+    transition:border-color .2s,transform .15s;
+  }
+  .member-card:hover { border-color:rgba(245,166,35,0.35); transform:translateX(4px); }
+  .member-rank { font-family:'Saira Condensed',sans-serif; font-weight:700; font-size:1.1rem; color:var(--text-dim); width:28px; text-align:center; flex-shrink:0; }
+  .member-avatar {
+    width:44px; height:44px; flex-shrink:0; display:grid; place-items:center;
+    font-family:'Saira Condensed',sans-serif; font-weight:900; font-size:1.1rem;
+    clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  }
+  .member-info { flex:1; }
+  .member-name { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.1rem; letter-spacing:1px; color:#fff; }
+  .member-note { font-size:.8rem; color:var(--text-dim); margin-top:1px; }
+  .member-role {
+    font-family:'Rajdhani',sans-serif; font-size:.72rem; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase; padding:3px 12px;
+    clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+    flex-shrink:0;
+  }
+  .role-leader { background:var(--leader-gold); color:#000; }
+  .role-co     { background:var(--co-leader);   color:#000; }
+  .role-elder  { background:var(--elder);        color:#000; }
+  .role-member { background:var(--member);       color:#000; }
+  .role-recruit{ background:var(--recruit);      color:#000; }
+  .del-btn {
+    background:none; border:none; color:#444; cursor:pointer;
+    font-size:.85rem; padding:4px 8px; transition:color .2s; flex-shrink:0;
+  }
+  .del-btn:hover { color:var(--rust); }
+
+  /* ─── OP.GG BUTTON ─── */
+  .opgg-btn {
+    display:inline-flex; align-items:center; gap:5px; flex-shrink:0;
+    font-family:'Rajdhani',sans-serif; font-size:.7rem; font-weight:700;
+    letter-spacing:1.5px; text-transform:uppercase; text-decoration:none;
+    color:#a78bfa; border:1px solid rgba(167,139,250,0.3);
+    padding:4px 10px; transition:all .2s; white-space:nowrap;
+    clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+    background:rgba(167,139,250,0.06);
+  }
+  .opgg-btn:hover {
+    background:rgba(167,139,250,0.18);
+    border-color:rgba(167,139,250,0.7);
+    color:#c4b5fd;
+    transform:translateY(-1px);
+    box-shadow:0 4px 16px rgba(167,139,250,0.18);
+  }
+  .opgg-btn svg { width:12px; height:12px; flex-shrink:0; }
+  .member-actions { display:flex; align-items:center; gap:.5rem; flex-shrink:0; }
+
+  /* ─── CONFIRM MODAL ─── */
+  #confirm-overlay {
+    position:fixed; inset:0; z-index:10000;
+    background:rgba(4,5,6,0.88);
+    display:flex; align-items:center; justify-content:center;
+    backdrop-filter:blur(6px);
+    animation:fadeIn .2s ease;
+  }
+  #confirm-overlay.hidden { display:none; }
+  .confirm-box {
+    background:rgba(10,12,16,0.99);
+    border:1px solid var(--panel-border);
+    border-top:3px solid var(--rust);
+    padding:2rem 2.2rem; width:100%; max-width:380px;
+    box-shadow:0 0 60px rgba(192,57,43,0.15), 0 30px 60px rgba(0,0,0,0.6);
+    text-align:center;
+  }
+  .confirm-icon { font-size:2rem; margin-bottom:.8rem; }
+  .confirm-title {
+    font-family:'Saira Condensed',sans-serif; font-weight:700; font-size:1.3rem;
+    letter-spacing:2px; color:#fff; margin-bottom:.5rem;
+  }
+  .confirm-msg {
+    font-family:'Noto Sans Thai',sans-serif; font-size:.9rem; line-height:1.7;
+    color:var(--text-dim); margin-bottom:1.6rem;
+  }
+  .confirm-msg strong { color:var(--amber); }
+  .confirm-btns { display:flex; gap:.8rem; justify-content:center; }
+  .confirm-yes {
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:.85rem;
+    letter-spacing:2px; text-transform:uppercase;
+    background:var(--rust); color:#fff; border:none;
+    padding:9px 28px; cursor:pointer; transition:all .2s;
+    clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  }
+  .confirm-yes:hover { background:#e74c3c; transform:translateY(-1px); }
+  .confirm-no {
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:.85rem;
+    letter-spacing:2px; text-transform:uppercase;
+    background:transparent; color:var(--text-dim);
+    border:1px solid rgba(255,255,255,0.12);
+    padding:9px 28px; cursor:pointer; transition:all .2s;
+    clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  }
+  .confirm-no:hover { border-color:var(--text-dim); color:#fff; }
+
+  .add-member-toggle {
+    display:flex; align-items:center; gap:.7rem;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:.85rem;
+    letter-spacing:2px; text-transform:uppercase; color:var(--amber);
+    background:transparent; border:1px dashed var(--amber-dark);
+    padding:10px 20px; cursor:pointer; width:100%; margin-top:1rem; transition:all .2s;
+  }
+  .add-member-toggle:hover { background:rgba(245,166,35,0.05); border-style:solid; }
+  .add-form {
+    background:var(--panel); border:1px solid var(--panel-border);
+    border-top:2px solid var(--amber); padding:1.5rem 2rem; display:none; margin-top:.5rem;
+  }
+  .add-form.open { display:block; animation:fadeIn .2s ease; }
+  .form-row { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; }
+  .form-group { flex:1; min-width:160px; }
+  .form-group label {
+    display:block; font-family:'Rajdhani',sans-serif; font-size:.75rem;
+    font-weight:700; letter-spacing:2px; text-transform:uppercase;
+    color:var(--text-dim); margin-bottom:.4rem;
+  }
+  .form-group input,.form-group select {
+    width:100%; background:rgba(255,255,255,0.04);
+    border:1px solid rgba(245,166,35,0.2); color:var(--text);
+    padding:8px 12px; font-family:'Noto Sans Thai',sans-serif; font-size:.9rem;
+    outline:none; transition:border-color .2s;
+  }
+  .form-group input:focus,.form-group select:focus { border-color:var(--amber); }
+  .form-group select option { background:#15181e; }
+  .form-submit {
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:.85rem;
+    letter-spacing:2px; text-transform:uppercase; color:#000;
+    background:var(--amber); border:none; padding:10px 28px; cursor:pointer;
+    clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%); transition:background .2s;
+  }
+  .form-submit:hover { background:#fff; }
+
+  /* ─── NEWS ─── */
+  .news-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1.5rem; }
+  .news-card { background:var(--panel); border:1px solid var(--panel-border); overflow:hidden; transition:border-color .2s,transform .15s; }
+  .news-card:hover { border-color:rgba(245,166,35,0.4); transform:translateY(-4px); }
+  .news-card-top { height:6px; background:linear-gradient(90deg,var(--amber),var(--rust)); }
+  .news-card-body { padding:1.4rem 1.5rem; }
+  .news-tag { font-family:'Rajdhani',sans-serif; font-size:.7rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--amber); background:rgba(245,166,35,0.08); padding:2px 10px; display:inline-block; margin-bottom:.8rem; }
+  .news-title { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.15rem; line-height:1.4; color:#fff; margin-bottom:.6rem; }
+  .news-excerpt { font-size:.88rem; line-height:1.7; color:var(--text-dim); }
+  .news-footer { display:flex; justify-content:space-between; align-items:center; padding:.9rem 1.5rem; border-top:1px solid var(--panel-border); }
+  .news-date { font-family:'Rajdhani',sans-serif; font-size:.75rem; font-weight:600; letter-spacing:1px; color:var(--text-dim); }
+  .news-new { font-family:'Rajdhani',sans-serif; font-size:.65rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; background:var(--rust); color:#fff; padding:2px 8px; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+  .news-loader { text-align:center; padding:4rem 2rem; color:var(--text-dim); font-family:'Rajdhani',sans-serif; font-size:.9rem; letter-spacing:2px; }
+  .spinner { width:32px; height:32px; border:2px solid rgba(245,166,35,0.2); border-top-color:var(--amber); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 1rem; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* ─── TOAST ─── */
+  #toast {
+    position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(20px);
+    background:rgba(10,12,16,0.97); border:1px solid var(--panel-border);
+    border-left:3px solid var(--green);
+    font-family:'Rajdhani',sans-serif; font-size:.88rem; font-weight:600; letter-spacing:1px; color:var(--text);
+    padding:10px 24px; z-index:9000; opacity:0; transition:opacity .3s,transform .3s; pointer-events:none;
+    white-space:nowrap;
+  }
+  #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ─── ADMIN BADGE ─── */
+  .admin-badge {
+    display:none; position:fixed; bottom:1.5rem; right:1.5rem; z-index:500;
+    background:rgba(245,166,35,0.08); border:1px solid var(--amber-dark);
+    font-family:'Rajdhani',sans-serif; font-size:.7rem; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase; color:var(--amber);
+    padding:6px 14px;
+    clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  }
+  body.is-admin .admin-badge { display:block; }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:var(--darker); }
+  ::-webkit-scrollbar-thumb { background:var(--amber-dark); }
+
+  footer {
+    border-top:1px solid var(--panel-border); text-align:center; padding:2rem;
+    position:relative; z-index:1;
+    font-family:'Rajdhani',sans-serif; font-size:.8rem; font-weight:600; letter-spacing:2px; color:var(--text-dim);
+  }
+  footer span { color:var(--amber); }
+
+  @media(max-width:620px){
+    nav { padding:0 1rem; }
+    .nav-links { gap:1rem; }
+    .nav-tag { display:none; }
+    .section { padding:3rem 1rem; }
+    .ann-board { padding:1.4rem; }
+    .login-box { padding:2rem 1.4rem; margin:1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="bg-noise"></div>
+
+<!-- ════════ LOGIN OVERLAY ════════ -->
+<div id="login-overlay" class="hidden">
+  <div class="login-box">
+    <button class="login-close" onclick="closeLogin()">✕</button>
+    <div class="login-logo">VSTH</div>
+    <div class="login-sub">🔐 Admin Panel Login</div>
+    <div class="login-field">
+      <label>Username</label>
+      <input type="text" id="l-user" placeholder="Enter username" autocomplete="username"
+             onkeydown="if(event.key==='Enter')document.getElementById('l-pass').focus()">
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="l-pass" placeholder="Enter password" autocomplete="current-password"
+             onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">🔓 เข้าสู่ระบบ</button>
+    <div class="login-error" id="l-err">❌ Username หรือ Password ไม่ถูกต้อง</div>
+    <div class="login-attempts" id="l-att"></div>
+  </div>
+</div>
+
+<!-- CUSTOM CONFIRM MODAL -->
+<div id="confirm-overlay" class="hidden">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑</div>
+    <div class="confirm-title">ยืนยันการลบ</div>
+    <div class="confirm-msg" id="confirm-msg">คุณต้องการลบสมาชิกนี้ออกจากแคลน?</div>
+    <div class="confirm-btns">
+      <button class="confirm-no"  onclick="confirmResolve(false)">ยกเลิก</button>
+      <button class="confirm-yes" onclick="confirmResolve(true)">ยืนยันลบ</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+<!-- ADMIN FIXED BADGE -->
+<div class="admin-badge">⚡ ADMIN MODE</div>
+
+<!-- ════════ NAV ════════ -->
+<nav>
+  <div class="nav-logo">VS<span>TH</span></div>
+  <div class="nav-links">
+    <a href="#" class="active" onclick="showPage('home',this)">HOME</a>
+    <a href="#" onclick="showPage('news',this)">ข่าวสาร</a>
+  </div>
+  <div class="nav-right">
+    <button class="nav-login-btn" id="nav-login-btn" onclick="openLogin()">🔐 Admin</button>
+    <div class="admin-bar" id="nav-admin-bar">
+      <div class="admin-dot"></div>
+      <div class="admin-label">Admin</div>
+      <button class="logout-btn" onclick="doLogout()">✕ ออก</button>
+    </div>
+    <div class="nav-tag">PUBG CLAN</div>
+  </div>
+</nav>
+
+<!-- ════════ HOME ════════ -->
+<div id="page-home" class="page active">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">🎖 Official Clan · PUBG: BATTLEGROUNDS</div>
+      <div class="hero-clan">VERSUS<br>THAILAND</div>
+      <div class="hero-sub">[ V S T H ]</div>
+      <div class="hero-divider"></div>
+      <p class="hero-desc">
+        แคลนระดับสูงจากประเทศไทย รวมนักรบชั้นยอดที่มีใจรักในการต่อสู้บน Battlegrounds
+        เราเน้นทีมเวิร์ค ยุทธวิธี และความสนุกสนาน ร่วมสร้างตำนานกับพวกเราได้เลย
+      </p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num" id="memberCount">--</div><div class="stat-label">สมาชิก</div></div>
+        <div class="stat"><div class="stat-num">TH</div><div class="stat-label">เซิร์ฟเวอร์</div></div>
+        <div class="stat"><div class="stat-num">∞</div><div class="stat-label">CHICKEN DINNER</div></div>
+      </div>
+      <button class="hero-cta" onclick="showPage('news',document.querySelector('.nav-links a:nth-child(2)'))">ดูข่าวสารล่าสุด</button>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0;">
+
+    <!-- ANNOUNCEMENT -->
+    <div class="sec-title">📢 ประกาศจาก<span>แคลน</span></div>
+    <div class="sec-sub">// CLAN ANNOUNCEMENTS</div>
+    <div class="sec-line"></div>
+
+    <div class="ann-board">
+      <div class="ann-header">
+        <div class="ann-icon">👑</div>
+        <div class="ann-title-wrap">
+          <div class="ann-label">ประกาศจากหัวหน้าแคลน</div>
+          <div class="ann-sender">VSTH — Versus Thailand <span class="ann-badge" style="margin-left:.5rem;">Clan Leader</span></div>
+        </div>
+        <div style="text-align:right;"><div class="ann-date" id="ann-date"></div></div>
+      </div>
+      <div class="ann-body">
+        <textarea class="ann-textarea" id="ann-text" readonly>ยินดีต้อนรับทุกคนสู่แคลน VSTH! 🎯
+
+ขณะนี้เราเปิดรับสมาชิกใหม่ที่มีใจรัก PUBG ทุกคนสามารถสมัครเข้าร่วมได้เลย
+ขอให้ทุกคนทำตามกฎของแคลน เล่นอย่างมีน้ำใจ และสนุกไปด้วยกันนะครับ
+
+ใครสนใจเข้าร่วมทีม หรือมีคำถามอะไร ติดต่อ Leader ได้เลยครับ 🔥</textarea>
+      </div>
+      <!-- ADMIN ONLY -->
+      <button class="ann-edit-btn ao-inline" id="ann-edit-btn" onclick="toggleAnnEdit()">✏ แก้ไขประกาศ</button>
+    </div>
+
+    <!-- MEMBERS -->
+    <div class="sec-title">👥 สมาชิก<span>แคลน</span></div>
+    <div class="sec-sub">// CLAN ROSTER</div>
+    <div class="sec-line"></div>
+
+    <div class="role-filter">
+      <button class="role-btn all active" onclick="filterRole('all',this)">ทั้งหมด</button>
+      <button class="role-btn leader"     onclick="filterRole('leader',this)">Leader</button>
+      <button class="role-btn co"         onclick="filterRole('co',this)">Co-Leader</button>
+      <button class="role-btn elder"      onclick="filterRole('elder',this)">Elder</button>
+      <button class="role-btn member"     onclick="filterRole('member',this)">Member</button>
+      <button class="role-btn recruit"    onclick="filterRole('recruit',this)">Recruit</button>
+    </div>
+
+    <div class="members-grid" id="members-grid"></div>
+
+    <!-- ADMIN ONLY: add member -->
+    <button class="add-member-toggle ao" onclick="document.getElementById('add-form').classList.toggle('open')">
+      ＋ เพิ่มสมาชิกใหม่
+    </button>
+    <div class="add-form" id="add-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>ชื่อในเกม (IGN)</label>
+          <input type="text" id="inp-name" placeholder="PlayerName#1234">
+        </div>
+        <div class="form-group">
+          <label>ตำแหน่ง</label>
+          <select id="inp-role">
+            <option value="leader">👑 Leader</option>
+            <option value="co">⚔ Co-Leader</option>
+            <option value="elder">🛡 Elder</option>
+            <option value="member" selected>🎯 Member</option>
+            <option value="recruit">🔰 Recruit</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>หมายเหตุ / บทบาท</label>
+          <input type="text" id="inp-note" placeholder="Sniper / Support / IGL ...">
+        </div>
+        <div class="form-group">
+          <label>🔗 Server (op.gg)</label>
+          <select id="inp-server">
+            <option value="steam">Steam (PC)</option>
+            <option value="kakao">Kakao</option>
+          </select>
+        </div>
+      </div>
+      <button class="form-submit" onclick="addMember()">+ เพิ่มสมาชิก</button>
+    </div>
+
+  </div>
+</div><!-- /home -->
+
+
+<!-- ════════ NEWS ════════ -->
+<div id="page-news" class="page">
+  <div class="section">
+    <div class="sec-title">🔔 ข่าวสาร<span>PUBG</span></div>
+    <div class="sec-sub">// PATCH NOTES · UPDATES · EVENTS</div>
+    <div class="sec-line"></div>
+    <div id="news-container">
+      <div class="news-loader"><div class="spinner"></div>กำลังโหลดข้อมูล...</div>
+    </div>
+  </div>
+</div>
+
+<footer>&copy; 2025 <span>VSTH</span> · Versus Thailand · PUBG: BATTLEGROUNDS Clan</footer>
+
+<script>
+// ══════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════
+const CRED = { user:'Admin', pass:'P@ssw0rd' };
+let isAdmin = false, loginAttempts = 0;
+
+function openLogin() {
+  document.getElementById('l-user').value = '';
+  document.getElementById('l-pass').value = '';
+  document.getElementById('l-err').classList.remove('show');
+  document.getElementById('l-att').textContent = '';
+  document.getElementById('login-overlay').classList.remove('hidden');
+  setTimeout(() => document.getElementById('l-user').focus(), 80);
+}
+function closeLogin() {
+  document.getElementById('login-overlay').classList.add('hidden');
+}
+document.getElementById('login-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('login-overlay')) closeLogin();
+});
+
+function doLogin() {
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value;
+  if (u === CRED.user && p === CRED.pass) {
+    isAdmin = true; loginAttempts = 0;
+    closeLogin(); applyAdmin();
+    showToast('✅ เข้าสู่ระบบ Admin สำเร็จ');
+  } else {
+    loginAttempts++;
+    const err = document.getElementById('l-err');
+    err.classList.remove('show');
+    void err.offsetWidth;
+    err.classList.add('show');
+    document.getElementById('l-att').textContent = `พยายามเข้าสู่ระบบ ${loginAttempts} ครั้ง`;
+    document.getElementById('l-pass').value = '';
+    document.getElementById('l-pass').focus();
+  }
+}
+
+function doLogout() {
+  isAdmin = false;
+  // save announcement if mid-edit
+  if (annEditing) {
+    const ta = document.getElementById('ann-text');
+    localStorage.setItem('vsth-ann', ta.value);
+    annEditing = false;
+  }
+  // reset ann-text UI back to read-only and restore saved content
+  const ta = document.getElementById('ann-text');
+  ta.readOnly = true;
+  ta.style.background = 'transparent';
+  ta.style.border = 'none';
+  ta.style.padding = '0';
+  const savedAnn = localStorage.getItem('vsth-ann');
+  if (savedAnn) ta.value = savedAnn;
+  document.getElementById('ann-edit-btn').textContent = '✏ แก้ไขประกาศ';
+  document.getElementById('add-form').classList.remove('open');
+  applyAdmin();
+  showToast('🔒 ออกจากระบบ Admin แล้ว');
+}
+
+function applyAdmin() {
+  if (isAdmin) {
+    document.body.classList.add('is-admin');
+    document.getElementById('nav-login-btn').style.display = 'none';
+    document.getElementById('nav-admin-bar').classList.add('visible');
+  } else {
+    document.body.classList.remove('is-admin');
+    document.getElementById('nav-login-btn').style.display = '';
+    document.getElementById('nav-admin-bar').classList.remove('visible');
+  }
+  renderMembers();
+}
+
+// ══════════════════════════════════════════
+//  MEMBERS
+// ══════════════════════════════════════════
+// Default members — only used if localStorage is empty or missing
+const DEFAULT_MEMBERS = [
+  { name:'VSTH_Leader', role:'leader',  note:'Clan Leader / IGL',    server:'steam' },
+  { name:'VSTH_CoLead', role:'co',      note:'Co-Leader / Assaulter', server:'steam' },
+  { name:'VSTH_Elder1', role:'elder',   note:'Elder / Sniper',        server:'steam' },
+  { name:'VSTH_Elder2', role:'elder',   note:'Elder / Support',       server:'steam' },
+  { name:'VSTH_Pro1',   role:'member',  note:'Member / Fragger',      server:'steam' },
+  { name:'VSTH_Pro2',   role:'member',  note:'Member / Driver',       server:'steam' },
+  { name:'VSTH_New1',   role:'recruit', note:'Recruit',               server:'steam' },
+];
+// Start with defaults — loadSavedData() at the bottom will override with localStorage
+let members = DEFAULT_MEMBERS.map(m => ({...m}));
+const roleLabel = { leader:'Leader', co:'Co-Leader', elder:'Elder', member:'Member', recruit:'Recruit' };
+const roleClass  = { leader:'role-leader', co:'role-co', elder:'role-elder', member:'role-member', recruit:'role-recruit' };
+const avatarBg   = { leader:'#c9a227', co:'#b87333', elder:'#7a6040', member:'#4a7a3a', recruit:'#3a5f7a' };
+let curFilter = 'all';
+
+function saveMembers() {
+  localStorage.setItem('vsth-members', JSON.stringify(members));
+  localStorage.setItem('vsth-members-ts', Date.now().toString());
+}
+
+function renderMembers() {
+  const grid = document.getElementById('members-grid');
+  const list = curFilter === 'all' ? members : members.filter(m => m.role === curFilter);
+  document.getElementById('memberCount').textContent = members.length;
+  grid.innerHTML = list.map(m => {
+    const i = members.indexOf(m);
+    const del = isAdmin ? `<button class="del-btn" onclick="removeMember(${i})" title="ลบ">✕</button>` : '';
+    const srv = m.server || 'steam';
+    // op.gg PUBG profile URL — encode name properly
+    const encodedName = encodeURIComponent(m.name);
+    const opggUrl = srv === 'kakao'
+      ? `https://pubg.op.gg/user/${encodedName}?server=kakao`
+      : `https://pubg.op.gg/user/${encodedName}`;
+    const opggBtn = `<a class="opgg-btn" href="${opggUrl}" target="_blank" rel="noopener" title="ดูสถิติบน op.gg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      op.gg
+    </a>`;
+    return `<div class="member-card" data-role="${m.role}">
+      <div class="member-rank">#${i+1}</div>
+      <div class="member-avatar" style="background:${avatarBg[m.role]};color:#000">${m.name[0].toUpperCase()}</div>
+      <div class="member-info">
+        <div class="member-name">${escHtml(m.name)}</div>
+        ${m.note?`<div class="member-note">${escHtml(m.note)}</div>`:''}
+      </div>
+      <div class="member-role ${roleClass[m.role]}">${roleLabel[m.role]}</div>
+      <div class="member-actions">${opggBtn}${del}</div>
+    </div>`;
+  }).join('') || '<div style="color:var(--text-dim);font-family:Rajdhani,sans-serif;padding:1rem;letter-spacing:1px;">ไม่มีสมาชิกในตำแหน่งนี้</div>';
+}
+
+function addMember() {
+  if (!isAdmin) { openLogin(); return; }
+  const name = document.getElementById('inp-name').value.trim();
+  const role = document.getElementById('inp-role').value;
+  const note = document.getElementById('inp-note').value.trim();
+  const server = document.getElementById('inp-server').value;
+  if (!name) { showToast('⚠ กรุณาระบุชื่อในเกม', true); return; }
+  members.push({ name, role, note, server });
+  saveMembers(); renderMembers();
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-note').value = '';
+  document.getElementById('add-form').classList.remove('open');
+  showToast(`✅ เพิ่ม ${name} เรียบร้อย`);
+}
+
+function removeMember(i) {
+  if (!isAdmin) return;
+  const name = members[i] ? members[i].name : '';
+  showConfirm(
+    `ต้องการลบ <strong>${escHtml(name)}</strong> ออกจากแคลน?`,
+    () => {
+      members.splice(i, 1);
+      saveMembers(); renderMembers();
+      showToast(`🗑 ลบ ${name} เรียบร้อย`);
+    }
+  );
+}
+
+function filterRole(role, btn) {
+  curFilter = role;
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMembers();
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ══════════════════════════════════════════
+//  ANNOUNCEMENT
+// ══════════════════════════════════════════
+let annEditing = false;
+function toggleAnnEdit() {
+  if (!isAdmin) { openLogin(); return; }
+  const ta = document.getElementById('ann-text');
+  const btn = document.getElementById('ann-edit-btn');
+  annEditing = !annEditing;
+  ta.readOnly = !annEditing;
+  if (annEditing) {
+    ta.style.background = 'rgba(245,166,35,0.04)';
+    ta.style.border = '1px solid rgba(245,166,35,0.3)';
+    ta.style.padding = '8px';
+    btn.textContent = '💾 บันทึกประกาศ';
+    ta.focus();
+  } else {
+    const saved = ta.value;
+    ta.style.background = 'transparent';
+    ta.style.border = 'none';
+    ta.style.padding = '0';
+    btn.textContent = '✏ แก้ไขประกาศ';
+    localStorage.setItem('vsth-ann', saved);
+    ta.value = saved; // ensure displayed value stays correct
+    showToast('💾 บันทึกประกาศเรียบร้อย');
+  }
+}
+
+// Announcement is loaded in loadSavedData() at the bottom
+document.getElementById('ann-date').textContent =
+  new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+
+// ══════════════════════════════════════════
+//  PAGE NAV
+// ══════════════════════════════════════════
+function showPage(id, link) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if (link) link.classList.add('active');
+  window.scrollTo(0,0);
+  if (id === 'news') loadNews();
+}
+
+// ══════════════════════════════════════════
+//  CUSTOM CONFIRM MODAL
+// ══════════════════════════════════════════
+let _confirmCallback = null;
+function showConfirm(msg, onYes) {
+  _confirmCallback = onYes;
+  document.getElementById('confirm-msg').innerHTML = msg;
+  document.getElementById('confirm-overlay').classList.remove('hidden');
+}
+function confirmResolve(yes) {
+  document.getElementById('confirm-overlay').classList.add('hidden');
+  if (yes && typeof _confirmCallback === 'function') _confirmCallback();
+  _confirmCallback = null;
+}
+document.getElementById('confirm-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('confirm-overlay')) confirmResolve(false);
+});
+
+// ══════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════
+let toastTimer;
+function showToast(msg, warn=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderLeftColor = warn ? 'var(--rust)' : 'var(--green)';
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ══════════════════════════════════════════
+//  NEWS
+// ══════════════════════════════════════════
+let newsLoaded = false;
+async function loadNews() {
+  if (newsLoaded) return;
+  const c = document.getElementById('news-container');
+  c.innerHTML = '<div class="news-loader"><div class="spinner"></div>กำลังโหลดข้อมูลจาก AI...</div>';
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:1000,
+        system:'You are a PUBG: BATTLEGROUNDS news assistant. Return ONLY a valid JSON array (no markdown, no extra text) of 6 news objects. Each object: tag (string), title (Thai), excerpt (Thai, 1-2 sentences), date (like "18 มี.ค. 2568"), isNew (boolean). Generate realistic PUBG 2025-2026 news.',
+        messages:[{role:'user',content:'Generate 6 latest PUBG news items, JSON array only.'}]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content.map(b=>b.text||'').join('');
+    renderNews(JSON.parse(raw.replace(/```json|```/g,'').trim()));
+    newsLoaded = true;
+  } catch {
+    c.innerHTML = fallbackNews();
+    newsLoaded = true;
+  }
+}
+
+function renderNews(items) {
+  document.getElementById('news-container').innerHTML =
+    `<div class="news-grid">${items.map(n=>`
+      <div class="news-card">
+        <div class="news-card-top"></div>
+        <div class="news-card-body">
+          <div class="news-tag">${escHtml(n.tag||'UPDATE')}</div>
+          <div class="news-title">${escHtml(n.title)}</div>
+          <div class="news-excerpt">${escHtml(n.excerpt)}</div>
+        </div>
+        <div class="news-footer">
+          <div class="news-date">📅 ${escHtml(n.date)}</div>
+          ${n.isNew?'<div class="news-new">NEW</div>':''}
+        </div>
+      </div>`).join('')}</div>`;
+}
+
+function fallbackNews() {
+  const fb=[
+    {tag:'PATCH',   title:'อัปเดต Patch 33.1 — แผนที่ใหม่และอาวุธใหม่',        excerpt:'แผนที่ขนาดกลางใหม่พร้อมสภาพอากาศไดนามิค ปรับสมดุลอาวุธหลายรายการ',         date:'18 มี.ค. 2568',isNew:true},
+    {tag:'SEASON',  title:'ซีซัน C7S25 เริ่มต้นแล้ว!',                           excerpt:'ระบบ Ranked ใหม่พร้อม Royale Pass ธีม Military ที่คุณห้ามพลาด',             date:'15 มี.ค. 2568',isNew:true},
+    {tag:'EVENT',   title:'กิจกรรม Survival Royale สุดพิเศษ',                    excerpt:'โหมดพิเศษจำกัดเวลา ชิงรางวัลพิเศษตลอดสัปดาห์',                            date:'10 มี.ค. 2568',isNew:false},
+    {tag:'WEAPON',  title:'อาวุธใหม่ XM8 เข้าสู่ Battlegrounds',                 excerpt:'ไรเฟิลจู่โจมระดับสูงพร้อม Attachment ใหม่ปรับแต่งได้หลากหลาย',            date:'5 มี.ค. 2568', isNew:false},
+    {tag:'BALANCE', title:'ปรับ Balance ยานพาหนะและ Loot Spawn',                 excerpt:'Buggy และ Motorcycle ปรับความเร็วใหม่ อัตรา Loot Spawn เพิ่มขึ้นทั่วแผนที่',date:'1 มี.ค. 2568', isNew:false},
+    {tag:'ESPORTS', title:'PUBG Global Championship 2025 เริ่มแล้ว',              excerpt:'ทีมไทยเตรียมพร้อมแข่งขันระดับโลก ลุ้นรางวัลรวมกว่า 2 ล้านดอลลาร์',       date:'25 ก.พ. 2568',isNew:false},
+  ];
+  return `<div class="news-grid">${fb.map(n=>`
+    <div class="news-card"><div class="news-card-top"></div>
+    <div class="news-card-body">
+      <div class="news-tag">${n.tag}</div>
+      <div class="news-title">${n.title}</div>
+      <div class="news-excerpt">${n.excerpt}</div>
+    </div>
+    <div class="news-footer"><div class="news-date">📅 ${n.date}</div>${n.isNew?'<div class="news-new">NEW</div>':''}</div>
+    </div>`).join('')}</div>`;
+}
+
+// ══════════════════════════════════════════
+//  INIT — robust load from localStorage
+// ══════════════════════════════════════════
+(function loadSavedData() {
+  // Load members — always prefer localStorage over hardcoded defaults
+  try {
+    const raw = localStorage.getItem('vsth-members');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        members = parsed;
+      }
+    }
+  } catch(e) {
+    console.warn('vsth: failed to load members from storage', e);
+  }
+
+  // Load announcement
+  try {
+    const ann = localStorage.getItem('vsth-ann');
+    if (ann) document.getElementById('ann-text').value = ann;
+  } catch(e) {}
+})();
+
+renderMembers();
+applyAdmin();
+</script>
+</body>
+</html>
